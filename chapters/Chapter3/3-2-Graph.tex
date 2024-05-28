@@ -1,0 +1,21 @@
+\section{Graph Neural Networks}
+
+Graph Neural Networks (GNNs) are a class of neural networks that operate directly on graph data structures. They have emerged as a powerful tool for machine learning based Weather Prediction. One of the first MLWP was made using this type of architecture \cite{keisler} and after that GraphCast also used this architecture. 
+
+\subsection{Overview of GNNs}
+
+GNNs extend the neural network concepts to graph data by learning to capture the dependencies between connected nodes. They do so by passing messages or information along the edges of the graph, updating the representation of each node based on the representations of its neighbors. This process is often referred to as message passing or neighborhood aggregation.
+
+\subsection{Message Passing in GNNs}
+
+In a typical GNN, each node is initialized with a feature vector, and the goal is to learn a new representation for each node that captures both its own features and the features of its neighbors. This is achieved through a series of message passing steps, where each node aggregates the feature vectors of its neighbors and updates its own feature vector based on the aggregated result.\\
+
+Formally, the update rule for a node $v$ at the $k$-th iteration can be written as:\\
+
+$$h_v^{(k)} = \text{UPDATE}\left(h_v^{(k-1)}, \text{AGGREGATE}\left(\left\{h_u^{(k-1)}: u \in \mathcal{N}(v)\right\}\right)\right)$$
+
+where $h_v^{(k)}$ is the feature vector of node $v$ at iteration $k$, $\mathcal{N}(v)$ is the set of neighbors of node $v$, and UPDATE and AGGREGATE are differentiable functions that can be learned during training.
+
+\subsection{Learning More About GNNs}
+
+For a more in-depth introduction to GNNs, go through this paper : \href{https://distill.pub/2021/gnn-intro/}{Graph Neural Networks: An Intuitive Introduction}.

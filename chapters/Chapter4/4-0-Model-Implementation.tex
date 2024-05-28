@@ -1,0 +1,14 @@
+\chapter{Model Implementation}
+
+In this chapter, I will detail the various changes and adjustments made to the original architectures of KARINA and ConvNext to better suit a local model at a resolution of 0.25°. The aim is to develop a regional machine learning weather prediction model that leverages the strengths of both KARINA and FourCastNet.\\
+
+The original KARINA architecture was designed for global weather prediction and thus, certain modifications are necessary to adapt it to a regional model. Similarly, while ConvNext is a state-of-the-art convolutional neural network, it "may" requires modifications to be applicable to our specific use case.\\
+
+In the following sections, I will provide a detailed explanation of each modification made to the original architectures and the rationale behind them. By the end of this chapter, we will have a clear understanding of how the original architectures were adapted to create a regional machine learning weather prediction model.\\
+
+As viewed in the introduction on the section "models", the first implementation is "simply" a local forecast with as input the regional state at time t and as output that same regional state at time t+dt (6h).\\
+
+Model0 is the playground of that first model where i try to understand how and what are the possiblities to adapt KARINA's model to a local model.\\
+
+\input{chapters/Chapter4/4-1-Model0}
+\newpage

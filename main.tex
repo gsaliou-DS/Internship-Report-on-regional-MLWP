@@ -1,0 +1,77 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage[french]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[justification=centering]{caption}
+\usepackage{lmodern}
+\usepackage{graphicx} 
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{csquotes}
+\usepackage{multirow}
+\usepackage{fancyvrb}
+\usepackage{svg}
+\usepackage{amsmath}
+\usepackage{placeins}
+\usepackage{float}
+\usepackage{stmaryrd}
+\usepackage{framed}
+\usepackage{tcolorbox}
+\usepackage{subcaption} 
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{array} 
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage[export]{adjustbox} 
+\usepackage{lipsum}
+\usepackage{caption} 
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{pdflscape}
+\usepackage{makecell}
+
+% Configuration de la mise en page
+\geometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
+
+\usepackage[style=authoryear, backend=biber, maxbibnames=99]{biblatex}
+\addbibresource{references.bib}
+\usepackage{hyperref}
+
+% Custom citation formatting
+\renewcommand*{\nameyeardelim}{\addcomma\space}
+\DeclareFieldFormat{cite}{\mkbibparens{\citeyear{#1}}}
+
+
+
+\begin{document}
+
+\input{chapters/Chapter1/0-garde}
+\newpage
+
+
+
+% Tables des matières
+\tableofcontents
+\newpage
+
+
+\input{chapters/Chapter1/1-Introduction}
+
+\input{chapters/Chapter2/2-0-State-of-the-art-model}
+
+\input{chapters/Chapter3/3-0-Architecture}
+
+\input{chapters/Chapter4/4-0-Model-Implementation}
+
+\input{chapters/Chapter5/5-0-Limitations}
+
+\printbibliography
+
+% Table des figures
+\listoffigures
+\newpage
+
+\appendix
+\input{chapters/Annexe/Recap_SOA}
+\end{document}

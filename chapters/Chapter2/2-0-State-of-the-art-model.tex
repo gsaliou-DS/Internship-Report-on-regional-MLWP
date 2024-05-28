@@ -1,0 +1,89 @@
+\chapter{State of the art model}
+
+\section{Spatial Resolution}
+
+\begin{tabular}{>{\bfseries}l<{\hspace{1em}} >{\raggedleft\arraybackslash}p{5cm}}
+\hline
+\textbf{Model} & \textbf{Resolution} \\
+\hline
+Keisler \cite{keisler} & 1° * 1°\\
+Pangu Weather \cite{panguweather} & 0.25° * 0.25° \\
+Pangu Weather lite \cite{panguweather} & 0.25° * 0.25° \\
+GraphCast \cite{graphcast} & 0.25° * 0.25° \\
+GraphCast Small \cite{graphcast} & 1° * 1° \\
+FuXi \cite{fuxi} & 0.25° * 0.25° \\
+KARINA \cite{Karina} & 2.5° * 2.5° \\
+\end{tabular}
+
+\vspace{2em}
+An interesting aspect of Keisler's approach is that he initially trained his neural network on input data with a resolution of 2 degrees for 3.5 days using a learning rate (lr) of 3e-4. Subsequently, the network was trained on data with a resolution of 1 degree for 1 day with lr=3e-5, followed by another day of training with lr=3e-6.
+
+\section{Time Resolution}
+
+\begin{tabular}{>{\bfseries}l<{\hspace{1em}} >{\raggedleft\arraybackslash}p{5cm}}
+\hline
+\textbf{Model} & \textbf{Time step (in hour)} \\
+\hline
+Keisler & 6 \\
+Pangu Weather &  1,3,6,24 \\
+Pangu Weather lite &  24 \\
+GraphCast & 6 \\
+GraphCast small & 6 \\
+FuXi & 6 \\
+KARINA & 24 \\
+\end{tabular}
+
+\vspace{2em}
+Interestingly, FuXi's study builds on a comment made in the Pangu Weather paper, which notes that for a 7-day weather forecast, it is more accurate to run a 24-hour model seven times than to run a 1-hour model 168 times. This significantly reduces error accumulation. However, training a model for more than 24 hours is challenging. FuXi has developed both deterministic and ensemble versions of their model to address this challenge.
+
+\section{Code availablity}
+
+\begin{tabular}{>{\bfseries}l<{\hspace{1em}} >{\centering\arraybackslash}p{6cm} >{\raggedleft\arraybackslash}p{5cm}}
+\hline
+\textbf{Model} & \textbf{Code} & \textbf{Pre-trained}\\
+\hline
+Keisler & Yes \cite{keiser-github} & No \\
+Pangu Weather &  Yes \cite{pangu-weather-Github} & Yes \\
+Pangu Lite &  Yes \cite{pangu-weather-Github} & Yes \\
+GraphCast & Yes \cite{graphcast-github} & Yes \\
+GraphCast small & Yes \cite{graphcast-github} & Yes \\
+FuXi & \textcolor{red}{No} \cite{fuxi-repo} & Yes \\
+KARINA & \textcolor{green}{Yes} \cite{karina-code} & \textcolor{green}{Yes} \\
+LAM & \textcolor{green}{Yes} \cite{neural-lam} & \textcolor{green}{Yes}
+\end{tabular}
+
+\vspace{2em}
+GraphCast small has a resolution of 1°, 13 pressure levels, and trained on ERA5 data from 1979 to 2015 instead of 0.25 degree resolution, 37 pressure levels), trained on ERA5 data from 1979 to 2017.\\
+Pangu Lite has only been trained and tested in 00UTC data and on 11 years instead of 39 years.
+
+\section{Training Time with Different Models}
+
+\begin{tabular}{>{\bfseries}l<{\hspace{1em}} >{\centering\arraybackslash}p{6cm} >{\raggedleft\arraybackslash}p{5cm}}
+\hline
+\textbf{Model} & \textbf{Number of GPUs} & \textbf{Training Time}\\
+\hline
+Keisler & 1 Nvidia A100 GPU & 5.5 days \\
+Pangu Weather &  192 Nvidia Tesla-V100 GPUs & 4 * 16 days \\
+GraphCast & 32 Google Cloud TPU v4 devices & 4 weeks \\
+FuXi & 8 Nvidia A100 GPUs & 30 hours \\
+KARINA & 4 Nvidia A100 GPUs & 12 hours \\
+\end{tabular}
+
+\newpage
+\input{chapters/Chapter2/2-1-Keisler}
+
+\newpage
+\input{chapters/Chapter2/2-2-Graphcast}
+
+\newpage
+\input{chapters/Chapter2/2-3-Pangu-Weather}
+
+\newpage
+\input{chapters/Chapter2/2-4-FuXi}
+
+\newpage
+\input{chapters/Chapter2/2-5-KARINA}
+
+\newpage
+\input{chapters/Chapter2/2-6-Limited-Area-Modelling}
+

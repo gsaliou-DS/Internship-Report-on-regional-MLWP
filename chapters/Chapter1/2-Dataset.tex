@@ -1,0 +1,95 @@
+\section{Dataset}
+
+\section{Dataset}
+
+ERA5 is a meteorological and climatological dataset provided by the European Centre for Medium-Range Weather Forecasts (ECMWF). It is a reanalysis dataset that combines model data with observations from around the world to create a globally complete and consistent dataset. ERA5 provides hourly estimates for a wide range of atmospheric, ocean-wave, and land-surface quantities, along with an uncertainty estimate. The dataset is available from 1940 onwards and is updated daily with a delay of approximately five days. 
+
+The data is regridded onto a regular lat-lon grid of 0.25 degrees for reanalysis and 0.5 degrees for uncertainty estimation. The time step between two system states is 1 hour. ERA5 is the primary dataset used by Machine Learning-based Weather Prediction (MLWP) systems.
+
+
+
+\section{How do we use the data}
+
+\subsection{Train test validation}
+
+For the period I suggest that we take as KARINA and other model did which is the years 1979 to 2015 for training, 2016 and 2017 are for validation and 2018 as formal test. The choice to take data from 1979 onwards is three fold : first it correspond to the state of the art models choices, secondly it is the most recent years and it has been shown (show citation) that the models output might need the most recent years to make the best forecast and account for global warming trend and third the data before 1979 is said to be less trustworthy at this resolution.\\
+
+\subsection*{For the local model}
+
+We want the regional model to cover an area of 3000 km by 2000 km, which represents approximately 30 degrees by 20 degrees. With a resolution of 0.25 degrees for our data, this corresponds to a grid of approximately 120 by 80. We might choose 37 pressure level as graphCast did for the high resolution state. We will take from 30 to 50 N° and 125 to 155 E°.\\
+
+We will take 66 variables consisting of six surface variables and five variables with 12 vertical pressure levels from the surface to the lower stratosphere, known as prognostic variables of the Earth’s atmosphere. Accordingly with the study of  \cite{cheon2024advancing} we will use the following variables and the orography:\\
+
+\begin{table}[!h]
+	\caption{Comprehensive List of Key Atmospheric Variables for Climate Modeling, Corresponding Short Names, Vertical Measurement Levels hPa), and Units.}
+	\centering
+    \scriptsize
+	\begin{tabularx}{\textwidth}{@{}lXXXX@{}}
+		\toprule
+		Variable name & Short name & Vertical levels (hPa) & Units & \\
+		\midrule
+		Zonal wind & U & 1000, 925, 850, 800, 700, 600, 500, 400, 300, 200, 100, 50 & m/s & \\
+		\addlinespace
+		Meridional wind & V & 1000, 925, 850, 800, 700, 600, 500, 400, 300, 200, 100, 50 & m/s & \\
+		\addlinespace
+		Temperature & T & 1000, 925, 850, 800, 700, 600, 500, 400, 300, 200, 100, 50 & K & \\
+		\addlinespace
+		Specific humidity & Q & 1000, 925, 850, 800, 700, 600, 500, 400, 300, 200, 100, 50 & kg/kg & \\
+		\addlinespace
+		Geopotential & Z & 1000, 925, 850, 800, 700, 600, 500, 400, 300, 200, 100, 50 & m\(^2\)/s\(^2\) & \\
+		\addlinespace
+		2m temperature & T2m & & K & \\
+		\addlinespace
+		Mean sea level pressure & MSL & & Pa & \\
+		\addlinespace
+		Surface air pressure & SP & & Pa & \\
+		\addlinespace
+		Total column vertically-integrated water vapour & TCWV & & kg/m\(^2\) & \\
+		\addlinespace
+		Skin temperature & SKT & & K & \\
+		\addlinespace
+		TOA incident solar radiation & TISR & & J/m\(^2\) & \\
+		\bottomrule
+	\end{tabularx}
+	\label{tab:variables}
+\end{table}
+
+It seems that we could do it that way but we have to check \href{https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-complete?tab=form}{here}: \\
+
+For the query of all variables : 
+\scriptsize
+\begin{Verbatim}
+    #!/usr/bin/env python
+import cdsapi
+
+c = cdsapi.Client()
+
+c.retrieve("reanalysis-era5-complete", {
+    "class": "ea",
+    "date": "1979-12-01/to/2015-12-31",
+    "expver": "1",
+    "levtype": "sfc",
+    "param": "134.128/137.128/151.128/165.128/167.128/235.128",  #165.128 TOA incident solar radiation
+    "stream": "oper",
+    "time": "00:00:00/01:00:00/02:00:00/03:00:00/04:00:00/05:00:00/06:00:00/07:00:00/
+    08:00:00/09:00:00/10:00:00/11:00:00/12:00:00/13:00:00/14:00:00/15:00:00/16:00:00/
+    17:00:00/18:00:00/19:00:00/20:00:00/21:00:00/22:00:00/23:00:00",
+    "type": "an"
+}, "output1")
+
+c.retrieve("reanalysis-era5-complete", {
+    "class": "ea",
+    "date": "1979-12-01/to/2015-12-31",
+    "expver": "1",
+    "levelist": "50/100/200/300/400/500/600/700/800/850/925/1000",
+    "levtype": "pl",
+    "param": "129.128/130.128/131/132/133.128"
+    "stream": "oper",
+    "time": "00:00:00/01:00:00/02:00:00/03:00:00/04:00:00/05:00:00/06:00:00/07:00:00/
+    08:00:00/09:00:00/10:00:00/11:00:00/12:00:00/13:00:00/14:00:00/15:00:00/16:00:00/
+    17:00:00/18:00:00/19:00:00/20:00:00/21:00:00/22:00:00/23:00:00",
+    "type": "an"
+}, "output2")
+
+\end{Verbatim}
+\normalsize

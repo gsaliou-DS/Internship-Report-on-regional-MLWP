@@ -1,0 +1,26 @@
+\chapter{Introduction}
+
+For the past decade, numerical weather prediction (NWP) has been the primary approach for weather forecasting. NWP involves the numerical integration of partial differential equations, starting from the best estimate of the current state of the Earth system, to produce a weather forecast. In a standard NWP framework, a weather prediction is obtained through a deductive inference process, where the laws of physics are used to derive a deterministic forecast from the best possible initial conditions. These initial conditions are obtained by optimally combining Earth system observations and short-range forecasts through a process known as \textit{data assimilation}.\\
+
+However, the Earth's state can never be known perfectly, and to account for this, \textit{ensemble forecasting} is often used. This involves making multiple forecasts with small perturbations from a Gaussian distribution around the uncertainties in the system. While NWP has seen significant improvements in recent years, the biggest drawback is still the computational resources required to make accurate predictions in an operational context.\\
+
+Limited area modeling is crucial as it allows for high-resolution forecasts over specific regions without the need to model the entire globe, thereby significantly reducing computational costs. By focusing computational resources on a smaller area, limited area models (LAMs) can provide more detailed and accurate forecasts for local regions, which is essential for applications such as severe weather warnings, local climate studies, and resource management. Additionally, to compute high-resolution forecasts, high-resolution data are required. Currently, the best resolution available for a global forecast is 0.25°.\\
+
+In this context, data-driven modeling based on machine learning (ML) is showing great potential for weather forecasting applications. ML-based models offer the promise of delivering forecasts at a much lower computational cost, along with potential benefits such as increased timeliness and potentially increased accuracy.\\
+
+The aim of this project is to develop a local weather forecasting framework based on machine learning (ML) techniques using historical data from the ERA5 dataset. To achieve this goal, an initial approach will be devised that involves inputting two types of data into our system:\\
+
+\begin{itemize}
+    \item The low-resolution state of our system at time \( t + \Delta t \), which can initially be obtained from the ERA5 dataset. In the context of actual forecasting, these data can subsequently be replaced by a global model.
+    \item The high-resolution spatial state of our system at times \( t \) and \( t - \Delta t \) over a local range (e.g., 0.25° of latitude by 0.25° of longitude).
+\end{itemize}
+
+\vspace{2em}
+
+By utilizing these two types of data, we aim to predict local weather conditions at time \( t + \Delta t \) with higher resolution than the global state and create a proof of concept for a higher resolution forecast for a limited area. To accomplish this, ML techniques will be employed to train our forecasting model using historical data. The performance of our model will then be evaluated using WeatherBench2 \cite{Weatherbench}.
+
+
+\input{chapters/Chapter1/2-Dataset}
+
+\input{chapters/Chapter1/3-Models}
+\newpage

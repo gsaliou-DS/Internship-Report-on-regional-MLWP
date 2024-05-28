@@ -1,0 +1,15 @@
+\section{Lam with GraphCast}
+
+\subsection{Machine Learning Architecture}
+
+The GraphCast system is a machine learning architecture that takes as input the two most recent states of the Earth's weather (the current time and six hours prior) and predicts the next state of the weather six hours in advance. A single weather state is represented by a latitude/longitude grid of 0.25° (721 x 1440), which corresponds to a resolution of approximately 28 x 28 kilometers at the equator, where each grid point represents a set of surface and atmospheric variables. GraphCast is autoregressive, meaning it can be "unrolled" by feeding its own predictions back into the input to generate an arbitrarily long trajectory of weather states.\\
+
+GraphCast is implemented as a neural network architecture based on GNNs in an "encode-process-decode" configuration, with a total of 36.7 million parameters. The encoder uses a single GNN layer to map variables (normalized to zero mean and unit variance) represented as node attributes on the input grid to learned node attributes on an internal "multi-mesh" representation. The multi-mesh is a spatially homogeneous graph with high spatial resolution on the globe, defined by iteratively refining a regular icosahedron (12 nodes, 20 faces, 30 edges) six times, where each refinement divides each triangle into four smaller ones and reprojects the nodes onto the sphere.\\
+
+The processor uses 16 unshared GNN layers to perform efficient local and long-range information propagation with few message passing steps on the multi-mesh. The decoder maps the learned features from the last layer of the processor from the multi-mesh representation to the latitude-longitude grid and predicts the output as a residual update of the most recent input state (with output normalization to achieve unit variance on the residual target).\\
+
+During model development, 39 years (1979-2017) of historical data from the ECMWF's ERA5 reanalysis archive were used. GraphCast was trained to minimize the training objective using gradient descent and backpropagation. Training GraphCast took approximately four weeks on 32 Cloud TPU v4 devices using batch parallelism.\\
+
+\subsection{Data Availability}
+
+The code is available \href{https://github.com/google-deepmind/graphcast}{here}. The model is available pre-trained, as well as a smaller model with lower resolution.

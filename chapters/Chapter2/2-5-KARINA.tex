@@ -1,0 +1,57 @@
+\section{Cheon with KARINA}
+
+KARINA is a machine learning model for global weather prediction that aims to be computationally efficient, particularly during training. It required 4 NVIDIA A100 GPUs for less than 12 hours of training. However, the model has a low resolution of 2.5 degrees. It utilizes 66 parameters, including 6 surface parameters and 5 atmospheric parameters, across 12 vertical isobaric layers from the surface to the lower stratosphere. The tensor has a dimension of 7214466. The low resolution is considered by the authors to be an effective means of extracting global patterns while smoothing noise.\\
+
+\subsection{ML Architecture}
+
+The model employs a ConvNext architecture with two innovations: SENet for dynamic parameter recalibration and the introduction of geocyclic padding to preserve continuity at 0° and 360°.\\
+
+Squeeze-and-Excitation Networks (SENet) enable the model to focus on the most relevant features and meteorological variables through channel-wise recalibration.\\
+
+Geocyclic Padding: Geocyclic padding handles the spherical topology by performing circular padding of the longitudinal edges and reorganizing the polar regions. This maintains geographic continuity.\\
+
+\subsection{Data Availability}
+
+The paper has been available for one month and has not yet been published in an official journal. The code has just been made available \href{https://github.com/jmj2316/KARINA/}{on this GitHub repository}.\\
+
+\subsubsection{\href{https://github.com/jmj2316/KARINA/blob/main/networks/karina.py}{KARINA.py}}
+
+Let's analyze the code named KARINA.py in detail:
+This code is the body of the implementation of their CNN presented in the paper.\\
+
+We can start with the functions:\\
+
+\begin{itemize}
+\item \textbf{SELayer(nn.Module)}: This class defines the Squeeze-and-Excitation Layer, which is the channel attention layer. An attention layer allows a CNN to "improve the representation of features." This class defines two functions:
+\begin{enumerate}
+\item \textbf{Init}: The class constructor takes two arguments: channel (the number of channels) and reduction, which I believe reduces the dimensionality of the data by a factor of 16. In this constructor, we find: mean pooling on the input data, a fully connected layer (all nodes in the layer connect to all nodes in the next layer) with ReLu and Sigmoid activation functions.
+\item \textbf{Forward}: Applies mean pooling and then the fully connected layer to y, then multiplies the input tensor x by y, which is resized to match the size of x.
+\end{enumerate}
+\item \textbf{GeoCyclicPadding}: This class allows the innovation presented in the paper, i.e., to create a tensor that represents the constraint of a spherical domain. (I won't go into detail for now)
+\item \textbf{Block}
+\begin{enumerate}
+\item \textbf{Init}: The class constructor with three arguments: dim, the input dimension, droppath, the dropout rate set to zero, and therefore this function is never used (i.e., the input tensor is transmitted without modification). It can prevent overfitting in some cases, but it does not seem to be used here. Otherwise, the rest of the function is intended to apply \textit{SELayer and GeoCyclic Padding}
+\item \textbf{Forward}: The way x is propagated through a network.
+\end{enumerate}
+\item \textbf{ConvNext}:
+\begin{enumerate}
+\item \textbf{Init}: The class constructor with four arguments: the number of input channels (in chans), the number of output classes (num classes), the depths of the different blocks (depths), and the dimensions of the different blocks (dims). It initializes the downsampling layers (downsample layers) and the stages of the network using the Block defined above.
+\item \textbf{init weights}: As the name suggests, it initializes the weights.
+\item \textbf{forward features and forward}: The way x is propagated through the network.
+\end{enumerate}
+\item \textbf{Layer Norm}: As the name suggests, this class is used to normalize the network, layer by layer. It uses the layer norm function of PyTorch.
+\item \textbf{KARINA}:
+\begin{enumerate}
+\item  \textbf{init} 5 arguments : the size of the image (img size), the number of input channels (in chans), the number of output channels (out chans), the depths of the different blocks (depths) and the dimensions of the different blocks (dims)
+\item \textbf{forward} it propagates the network in convnext.
+\end{enumerate}
+\item \textbf{Main}: Defines the input and passes it through the model.
+\end{itemize}
+
+\subsubsection{\href{https://github.com/jmj2316/KARINA/blob/main/train_KARINA.py}{train-KARINA.py}}
+
+Let's analyze in detail how the model is trained. \textbf{TO BE DONE LATER}\\
+
+\begin{itemize}
+\item \textbf{Set seed(seed)}: This function aims to define a SINGLE random number generator and thus to have reproducibility of results (by performing the same operation, we will get the same result). In this function, we define the "seed" for PyTorch CPU and GPU, for numpy random and classic random, for object hashing (not well understood here the interest). We define cuDNN as deterministic: convolution operations are therefore deterministic and reproducible. And we disable the \textbf{benchmark} option, which seems to automatically select convolution algorithms, and therefore, once again, in the interest of result reproducibility, we disable this option.
+\end{itemize}

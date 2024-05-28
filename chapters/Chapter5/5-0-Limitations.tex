@@ -1,0 +1,9 @@
+\chapter{Limitations of Machine Learning approaches}
+
+This chapter is mostly based on the report of the ECMWF \cite{riseofdatadriven} published in the Bulletin of the American Meteorological Society. This paper is an assessment of Pangu weather vs ECMWF IFS in an operational-like context. What has been shown in that paper is an overly smooth forecast and under-representation of extreme events  creating Increasing biais with rollout and a poor performance in predicting tropical cyclone. The main reason for these problems is that the loss is a Root Mean Square Error. In previous studies, there has been a concern that training towards RMSE results in overly smooth forecast fields (see for example the smooth forecasts shown in \cite{keisler}).\\
+
+Indeed, the RMSE strongly penalizes large forecast departures from the observations (or analyses), thus discouraging bold forecasts. When comparing RMSE from different models, it is therefore important to check the level of activity of the different forecasts while interpreting the results. The activity of a forecast is here defined as standard deviation of the forecast anomaly.
+
+\section{Loss function}
+
+The loss function is a RMSE for every paper that has been reviewed 

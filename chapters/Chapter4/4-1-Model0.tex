@@ -1,0 +1,62 @@
+\section{Model 0}
+
+In this section, I present the first attempt at creating a regional machine learning weather prediction model. This approach is based on the work done by KARINA and FourCastNet, but we will modify their code to adapt it to our regional modeling needs.\\
+
+\subsection*{Padding}
+
+One of the key modifications we need to make is to change the padding used in the convolutional layers. In KARINA's code, they used a cyclic padding approach, which was a significant improvement for global representation. However, in our case, we are working with a local model, and the earth deformation can be neglected. Therefore, we will not use the cyclic padding approach.\\
+
+The padding is defined in the function \textbf{GeoCyclicPadding}. To modify it, we will need to remove the cyclic padding and replace it with a different padding approach. One important consideration is that when a convolutional filter is applied to an image, it may lose information at the edges. To avoid this, we will create a new padding function that we will call \textbf{LinearPadding}.\\
+
+There are several choices for padding, including:\\
+
+\begin{itemize}
+\item \textbf{Zero padding:} This is the most common padding approach, where zeros are added to the edges of the image. This ensures that the convolutional filter can be applied without losing any information. However, it may introduce some bias towards zero in the output. Seen here \cite{padding2002}.
+\item \textbf{Constant padding:} This approach involves adding a constant value to the edges of the image. The value can be chosen based on the application. For example, in image segmentation, a constant value of -1 can be used to indicate the background.
+\item \textbf{Reflection padding:} This approach involves reflecting the image at the edges. This can help to preserve the structure of the image at the edges, but may introduce some artificial symmetry.
+\item \textbf{Replication padding:} This approach involves replicating the values at the edges of the image. This can help to preserve the structure of the image at the edges, but may introduce some artificial repetition.
+\end{itemize}
+
+In our case, we will use zero padding, as it is the most common approach and has been shown to work well in many applications.\\
+
+The new padding function will be defined as follows:\\
+
+
+\begin{lstlisting}[language=Python, frame=single, basicstyle=\ttfamily\small, backgroundcolor=\color{red!10}]
+class GeoRectangularPadding(nn.Module):
+    def __init__(self, pad_width):
+        super(GeoRectangularPadding, self).__init__()
+        self.pad_width = pad_width
+
+    def forward(self, x):
+        batch_size, channels, height, width = x.shape
+
+        # Rectangular padding for left and right
+        left_pad = torch.zeros(batch_size, channels, height,
+        self.pad_width, device=x.device)
+        right_pad = torch.zeros(batch_size, channels, height,
+        self.pad_width, device=x.device)
+        left_right_padded = torch.cat([left_pad, x, right_pad],
+        dim=3)
+
+        # Rectangular padding for top and bottom
+        top_pad = torch.zeros(batch_size, channels,
+        self.pad_width, left_right_padded.shape[3], 
+        device=x.device)
+        bottom_pad = torch.zeros(batch_size, channels,
+        self.pad_width, left_right_padded.shape[3], 
+        device=x.device)
+        top_bottom_padded = torch.cat([top_pad, left_right_padded,
+        bottom_pad], dim=2)
+
+        return top_bottom_padded
+\end{lstlisting}
+
+
+In this code, we create a new class called \textbf{GeoRectangularPadding}, which takes a padding width as input. The forward function adds zero-padding to the left, right, top, and bottom of the input tensor. The resulting tensor has the same shape as the input tensor, but with additional zeros at the edges. This new padding function will be used in place of the \textbf{GeoCyclicPadding} function in KARINA's code.\\
+
+By using this linear padding approach, we can ensure that the convolutional filter can be applied to the image without losing any information at the edges. This modification is an important step in adapting KARINA's code for our regional modeling needs.\\
+
+\subsection*{Input Size}
+
+The actual input size is \textbf{(72, 144, 67} and we want to change that to \textbf{80,120,67} representing \textbf{lon ,lat, variables}.

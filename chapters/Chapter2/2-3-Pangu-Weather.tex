@@ -1,0 +1,15 @@
+\section{Keifeng with Pangu-Weather}
+
+\subsection{Machine Learning Architecture}
+
+The methodology involves training deep learning networks to take reanalysis weather data as input at a given point in time and produce reanalysis weather data at a future point in time as output. The team utilized a single point in time for both input and output. The temporal resolution of the ERA5 data is 1 hour, with up to 341,880 time points in the training subset (1979-2017), constituting the amount of training data in one epoch. To mitigate the risk of overfitting, the team randomly shuffled the order of samples from the training data at the beginning of each epoch.\\
+
+The team trained four models with lead times (the difference in time between input and output) of 1 hour, 3 hours, 6 hours, and 24 hours, respectively. Each of the four models was trained for 100 epochs, with each taking approximately 16 days on a cluster of 192 NVIDIA Tesla-V100 GPUs.\\
+
+The architecture is known as the 3D Earth-specific transformer (3DEST). The team incorporated all the weather variables included, such as 13 layers of upper-air variables and surface variables, into a single deep network. They then performed patch embedding to reduce the spatial resolution and combined the downsampled data into a 3D cube. The 3D data is propagated through an encoder-decoder architecture derived from the Swin transformer, a vision transformer variant, which has 16 blocks. The output is divided into upper-air variables and surface variables and is resampled with patch recovery to restore the original resolution. To inject Earth-specific priorities into the deep network, the team designed a position bias (a mechanism for encoding the position of each unit) to replace the original relative position bias of Swin. This modification increases the number of bias parameters by a factor of 527, with each deep 3D network containing approximately 64 million parameters.\\
+
+The lead time of a medium-range weather forecast is 7 days or more. This prompted the team to call the base models (with lead times of 1 hour, 3 hours, 6 hours, or 24 hours) iteratively, using each predicted result as input for the next step. To reduce cumulative forecast errors, they introduced a hierarchical temporal aggregation, a 'greedy' algorithm that always calls the model with the largest possible lead time. Mathematically, this significantly reduces the number of iterations. For example, if the lead time were 56 hours, the team would run the 24-hour forecast model 2 times, the 6-hour forecast model 1 time, and the 1-hour forecast model 2 times (Figure 1b). Compared to FourCastNet, which uses a fixed 6-hour forecast model, the team's method is faster and more accurate.\\
+
+\subsection{Data Availability}
+
+The code is available but currently under review. The pre-trained model is also available, along with a lite version that has a 24-hour step and has been tested only on 00 UTC.\\
